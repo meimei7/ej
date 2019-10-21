@@ -1,0 +1,164 @@
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="./bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.10.2/css/all.css">
+	<script type="text/javascript" src="./js/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="./bootstrap/js/bootstrap.js"></script>
+	<script>
+		var baseURL = "http://39.105.64.33:6677"
+		// 加载数据
+		function reloadData(){
+			var url = baseURL+"/order/findAll"
+			$.get(url,function(result){
+				if(result.status === 200){
+					$("#order_tb > tbody").empty();
+					result.data.forEach(function(item){
+						
+						$(`<tr>
+					<td><input type="checkbox" value="`+item.id+`"></td>
+					<td>`+item.customerId+`</td>
+					<td>`+item.addressId+`</td>
+					<td>`+item.orderTime+`</td>
+					<td>`+item.waiterId+`</td>
+					<td>`+item.total+`</td>
+					<td>
+						<a id="btn_del" href="javascript:void(0)">删除</a>
+					</td>
+				</tr>`).appendTo("#order_tb>tbody");
+					});
+				}else{
+					alert("服务接口出错！");
+				}
+			});
+		}
+		//批量删除订单信息
+	    function batchdelete(){
+	    	var ids = 
+            	$("input[type=checkbox]:checked")
+            	.map(function(index,item){
+            		return $(item).val()
+            	})
+            	.toArray();
+            	var url = baseURL+"/order/batchDelete"
+            	var data ="";
+		    // var ids = [1,2,3]; => ids=1&ids=2&id=3
+			    for(var index in ids){
+			    	var id = ids[index];
+			    	if(index == 0){
+			    		data += "ids="+id
+			    	} else {
+			    		data += "&ids="+id
+			    	}
+			    }
+			    $.post(url,data,function(result){
+		    	if(result.status ==200){
+		    		alert("删除成功");
+		    		reloadData();
+		    	} else {
+		    		alert(result.message);
+		    	}
+		    });
+	    }
+	    
+        $(function(){
+			//1.重载数据
+			reloadData();
+			//2.为添加按钮绑定事件
+			// $("#btn_add").click(function(){
+				
+			// 	$("#orderModal").modal("show");
+			// });
+           //3.监听模态框的关闭
+            $("	#orderModal").on("hidden.bs.modal",function(e){
+            	$(this).find("form")[0].reset();
+            })
+   //          //4.为修改按钮绑定事件
+            
+            $("#order_tb > tbody").on("click","a",function(){
+            	switch(this.id){
+            		case "btn_del":
+            		var url = "http://39.105.64.33:6677/order/deleteById";
+					var id = $(this).parents("tr").find("input").val();
+					var data ="id="+id;
+					$.get(url,data,function(result){
+						alert(result.message);
+						reloadData();
+					})
+            		break;
+            	}
+            })
+
+        })
+	</script>
+</head>
+<body>
+	<div class="container">
+		<br>
+		<div>
+			<!-- <button class="btn btn-primary" id="btn_add">添加</button> -->
+			<button class="btn btn-danger" id="btn_batch_upd" onclick="batchdelete()">批量删除</button>
+		</div>
+		<table class="table table-bordered table-hover" id="order_tb">
+			<thead>
+				<tr>
+					<th scope="col">编号</th>
+					<th scope="col">顾客编号</th>
+					<th scope="col">地址编号</th>
+					<th scope="col">下单时间</th>
+					<th scope="col">员工编号</th>
+					<th scope="col">总计个数</th>
+					<th scope="col">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+	<!-- 模态框 -->
+	<!-- Modal -->
+	<div class="modal fade" id="orderModal" tabindex="-1" ole="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">添加订单信息</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal.call(this)">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form id="order-form">
+						<input type="hidden" name="id">
+						<!-- 顾客编号 -->
+						<div class="form-group">
+							<label for="input_customerId" class="col-form-label">顾客编号:</label>
+							<input type="text" class="form-control" id="input_customerId" name="customerId">
+						</div>
+						<!-- 地址编号 -->
+						<div class="form-group">
+							<label for="input_addressId" class="col-form-label">地址编号:</label>
+							<input type="text" class="form-control" id="input_addressId" name="addressId">
+						</div>
+						<!-- 下单时间 -->
+						<div class="form-group">
+							<label for="input_password" class="col-form-label">下单时间:</label>
+							<input type="text" class="form-control" id="input_password" name="password">
+						</div>
+						<!-- 员工编号 -->
+						<div class="form-group">
+							<label for="input_photo" class="col-form-label">员工编号:</label>
+							<input type="text" class="form-control" id="input_photo" name="photo">
+						</div>
+						<!-- 总计个数 -->
+						<div class="form-group">
+							<label for="input_photo" class="col-form-label">总计个数:</label>
+							<input type="text" class="form-control" id="input_photo" name="photo">
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModal.call(this)">关闭</button>
+					<button type="button" class="btn btn-primary" onclick="submitCustomer()">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Modal结束 -->
