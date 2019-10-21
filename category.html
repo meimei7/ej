@@ -1,0 +1,215 @@
+
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="./bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.10.2/css/all.css">
+	<script type="text/javascript" src="./js/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="./bootstrap/js/bootstrap.js"></script>
+	<script>
+		var baseURL = "http://39.105.64.33:6677"
+		// 加载数据
+		function reloadData(){
+			var url = baseURL+"/category/findAll"
+			$.get(url,function(result){
+				if(result.status === 200){
+					$("#category_tb > tbody").empty();
+					result.data.forEach(function(item){
+						$(`<tr>
+					<td><input type="checkbox" value="`+item.id+`"></td>
+					<td class="pid">`+item.parentId+`</td>
+					<td class="name">`+item.name+`</td>
+					<td class="num">`+item.num+`</td>
+					<td>
+						<a id="btn_del" href="javascript:void(0)" >删除</a>
+						<a id="btn_upd"href="javascript:void(0)">修改</a>
+					</td>
+				</tr>`).appendTo("#category_tb>tbody");
+					});
+				}else{
+					alert("服务接口出错！");
+				}
+			});
+		}
+		//关闭模态框
+		function closeModal(){
+			$(this).parents(".modal").modal("hide");
+		}
+		
+		//保存或更新分类信息
+	    function submitCategory(){
+	    	// 1.获取信息
+	    	var id = $("input[name=id]").val();
+	    	var name = $("#category-form input[name=name]").val();
+	    	var num = $("#category-form input[name=num]").val();
+	    	var parentId = $("#input_parentId").val();
+	    	//2.与后台交互
+	    	var url = baseURL +"/category/saveOrUpdate"
+	    	var data;
+	    	if(id){
+				data = "id="+id+"&name="+name+"&num="+num+
+				"&parentId="+parentId;
+			} else {
+				data = "name="+name+"&num="+num+
+				"&parentId="+parentId;
+			}
+	    	$.post(url,data,function(result){
+	    		if(result.status === 200){
+					$("#CategoryModal").modal("hide");
+					reloadData();
+				} else {
+					alert("接口异常");
+				}
+			});
+	    }
+
+
+	    //批量删除分类信息
+	    function batchdelete(){
+	    	var ids = 
+            	$("input[type=checkbox]:checked")
+            	.map(function(index,item){
+            		return $(item).val()
+            	})
+            	.toArray();
+            	var url = baseURL+"/category/batchDelete"
+            	var data ="";
+		    // var ids = [1,2,3]; => ids=1&ids=2&id=3
+			    for(var index in ids){
+			    	var id = ids[index];
+			    	if(index == 0){
+			    		data += "ids="+id
+			    	} else {
+			    		data += "&ids="+id
+			    	}
+			    }
+			    $.post(url,data,function(result){
+		    	if(result.status ==200){
+		    		alert("删除成功");
+		    		reloadData();
+		    	} else {
+		    		alert(result.message);
+		    	}
+		    });
+	    }
+	    //查询所有分类id，放入模态框的下拉框中
+	    //在点击模态框显示的时候调用该函数
+	    function addId(){
+	    	var url_findId = baseURL+"/category/findAll";
+	    	$.get(url_findId,function(result){
+	    		result.data.forEach(function(item){
+	    			var newOption = $(`
+					<option value="`+item.id+`">`+item.id+`</option>
+				`);
+	    			$('#input_parentId').append(newOption);
+	    		})
+	    	})
+	    }
+		$(function(){
+			//1.重载数据
+			reloadData();
+			//2.为添加按钮绑定事件
+			$("#btn_add").click(function(){
+				$("input[name=id]").val("");
+				$("#category-form input[name=name]").val("");
+				$("#category-form input[name=num]").val("");
+				$("#input_parentId").val("");
+				$("#CategoryModal").modal("show");
+                $("#input_parentId").empty();
+                addId();
+			});
+            //3.监听模态框的关闭
+            $("CategoryModal").on("hidden.bs.modal",function(e){
+            	$(this).find("form")[0].reset();
+            })
+            //4.为修改按钮绑定事件
+            
+            $("#category_tb > tbody").on("click","a",function(){
+            	switch(this.id){
+            		case "btn_del":
+            		var url = " http://39.105.64.33:6677/category/deleteById";
+					var id = $(this).parents("tr").find("input").val();
+					var data ="id="+id;
+					$.get(url,data,function(result){
+						alert(result.message);
+						reloadData();
+					})
+            		break;
+            		case "btn_upd":
+            		id = $(this).parents("tr").find("input").val();
+            		console.log(id);
+					var name = $(this).parents("tr").children(".name").text();
+					console.log(name);
+					var num = $(this).parents("tr").children(".num").text();
+					console.log(num);
+					var parentId = $(this).parents("tr").children(".pid").text();
+					$("input[name=id]").val(id);
+					$("#category-form input[name=name]").val(name);
+					$("#category-form input[name=num]").val(num);
+					$("#input_parentId").val(parentId);
+					$("#CategoryModal").modal("show");
+            		break;
+            	}
+            })
+
+        })
+		
+</script>
+
+	<div class="container">
+		<br>
+		<div>
+			<button class="btn btn-primary" id="btn_add">添加</button>
+			<button class="btn btn-danger" id="btn_batch_upd" onclick="batchdelete()">批量删除</button>
+		</div>
+		<table class="table table-bordered table-hover" id="category_tb">
+			<thead>
+				<tr>
+					<th scope="col">编号</th>
+					<th scope="col">分类</th>
+					<th scope="col">分类名称</th>
+					<th scope="col">数量</th>
+					<th scope="col">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+	<!-- 模态框 -->
+	<!-- Modal -->
+	<div class="modal fade" id="CategoryModal" tabindex="-1" ole="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">添加分类信息</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal.call(this)">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form id="category-form">
+						<input type="hidden" name="id">
+						<!-- 分类名称 -->
+						<div class="form-group">
+							<label for="input_name" class="col-form-label">分类名称:</label>
+							<input type="text" class="form-control" id="input_name" name="name">
+						</div>
+						<!-- 数量 -->
+						<div class="form-group">
+							<label for="input_num" class="col-form-label">数量:</label>
+							<input type="text" class="form-control" id="input_num" name="num">
+						</div>
+						<!-- 父ID -->
+						<div class="form-group">
+							<label for="input_parentId" class="col-form-label">父ID:</label>
+							<select name="parentId" id="input_parentId" class="form-control"></select>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModal.call(this)">关闭</button>
+					<button type="button" class="btn btn-primary" onclick="submitCategory()">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Modal结束 -->
