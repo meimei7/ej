@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>e洁家政服务</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="./bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.10.2/css/all.css">
+	<script type="text/javascript" src="./js/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="./bootstrap/js/bootstrap.js"></script>
+	<script type="text/javascript" src="./index.js"></script>
+	<style>
+		.content{
+			position: absolute;
+			width: 100%;
+			top:0;
+			bottom: 0;
+		}
+		.mystyle{
+			padding: 20px 0 20px 0px;
+
+		}
+		.myul>li{
+			padding: 15px 0 15px 0;
+			text-align: center;
+
+		}
+		.myright{
+			height: 100%;
+		}
+		.mydiv{
+			border-radius: 5px;
+			background-color: #ffffff;
+			height: 100%;
+			padding: 1em;
+			box-sizing: border-box;
+		}
+		.myleft a{
+			color: #fff;
+			font-size: 16px;
+			text-decoration: none;
+		}
+		.myleft a:hover{
+			color: #fff;
+			font-size: 16px;
+			text-decoration: none;
+		}
+		.myleft > ul.myul > li.current{
+			background-color: #1E90FF;
+		}
+		.myleft > ul.myul > li.current a{
+			color: #fff;
+			text-decoration: none;
+		}
+		
+		
+	</style>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row content">
+			<!-- 左侧导航栏 -->
+			<div class="col-2 bg-dark myleft">
+				<div class="h4 text-light offset-md-1 mystyle">e洁家政服务平台</div>
+				<ul class="list-unstyled h6 text-light  myul">
+					<li url="./customer.html" class=" "><a href="javascript:void(0)">顾客管理</a></li>
+					<li url="./waiter.html" class=" "><a href="javascript:void(0)" c>员工管理</a></li>
+					<li url="./category.html" class=" "><a href="javascript:void(0)" >分类管理</a></li>
+					<li url="./product.html" class=" "><a href="javascript:void(0)" >产品管理</a></li>
+					<li url="./order.html" class=" "><a href="javascript:void(0)" >订单管理</a></li>
+					<li url="./comment.html" class=" l"><a href="javascript:void(0)" >评论管理</a></li>
+					<li url="./address.html" class=" l"><a href="javascript:void(0)" >地址管理</a></li>
+				</ul>
+			</div>
+			<!-- 右侧导航栏 -->
+			<div class="col bg-secondary">
+				<div class="mydiv bg-light ">
+					<div class="mynav">
+						<div aria-label="breadcrumb" class="customer">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#">主页</a></li>
+								<li class="breadcrumb-item active" aria-current="page">顾客管理</li>
+							</ol>
+						</div>
+						<div aria-label="breadcrumb" class="waiter">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#">主页</a></li>
+								<li class="breadcrumb-item active" aria-current="page">员工管理</li>
+							</ol>
+						</div>
+						<div aria-label="breadcrumb" class="category">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#">主页</a></li>
+								<li class="breadcrumb-item active" aria-current="page">分类管理</li>
+							</ol>
+						</div>
+						<div aria-label="breadcrumb" class="product">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#">主页</a></li>
+								<li class="breadcrumb-item active" aria-current="page">产品管理</li>
+							</ol>
+						</div>
+						<div aria-label="breadcrumb" class="order">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#">主页</a></li>
+								<li class="breadcrumb-item active" aria-current="page">订单管理</li>
+							</ol>
+						</div>
+						<div aria-label="breadcrumb" class="comment">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#">主页</a></li>
+								<li class="breadcrumb-item active" aria-current="page">评论管理</li>
+							</ol>
+						</div>
+						<div aria-label="breadcrumb" class="address">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#">主页</a></li>
+								<li class="breadcrumb-item active" aria-current="page">地址管理</li>
+							</ol>
+						</div>
+					</div>
+					<div id="wrapper"></div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+</body>
+</html>
